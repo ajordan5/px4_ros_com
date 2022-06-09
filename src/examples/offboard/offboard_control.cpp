@@ -53,6 +53,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <cmath>
 
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -154,8 +155,8 @@ void OffboardControl::disarm() const {
 void OffboardControl::publish_offboard_control_mode() const {
 	OffboardControlMode msg{};
 	msg.timestamp = timestamp_.load();
-	msg.position = true;
-	msg.velocity = false;
+	msg.position = false;
+	msg.velocity = true;
 	msg.acceleration = false;
 	msg.attitude = false;
 	msg.body_rate = false;
@@ -172,10 +173,13 @@ void OffboardControl::publish_offboard_control_mode() const {
 void OffboardControl::publish_trajectory_setpoint() const {
 	TrajectorySetpoint msg{};
 	msg.timestamp = timestamp_.load();
-	msg.x = 0.0;
-	msg.y = 0.0;
-	msg.z = -5.0;
-	msg.yaw = -3.14; // [-PI:PI]
+	msg.velocity[0] = 0.0;
+	msg.velocity[1] = 0.0;
+	msg.velocity[2] = -5.0;
+	// msg.position[0] = std::numeric_limits<double>::quiet_NaN();
+	// msg.position[1] = std::numeric_limits<double>::quiet_NaN();
+	// msg.position[2] = std::numeric_limits<double>::quiet_NaN();
+	// msg.yaw = -3.14; // [-PI:PI]
 
 	trajectory_setpoint_publisher_->publish(msg);
 }
